@@ -88,7 +88,7 @@ class TrendsService:
         geo/timeframe combinations to work around Google rate-limiting.
         Returns a DataFrame with columns [date, popularity].
         """
-        keyword = keyword.strip()
+        keyword = keyword.strip().lower()  # normalize: strip whitespace and lowercase
         if not keyword:
             return pd.DataFrame(columns=["date", "popularity"])
 

@@ -19,8 +19,8 @@ def build_interest_line_chart(df: pd.DataFrame, keyword: str) -> go.Figure:
             annotations=[
                 {
                     "text": (
-                        "Google Trends returned no data for this keyword.\n"
-                        "Try a different keyword, wider timeframe, or click Refresh Trends."
+                        "No data available for this keyword.\n"
+                        "Try a more popular keyword, wider timeframe, or click Refresh Trends."
                     ),
                     "xref": "paper",
                     "yref": "paper",

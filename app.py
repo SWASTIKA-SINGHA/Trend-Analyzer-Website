@@ -123,14 +123,29 @@ with right_col:
     if keyword:
         try:
             with st.spinner("Fetching popularity data from Google Trends…"):
-                popularity_df = fetch_interest_over_time(keyword=keyword, region=region, timeframe=timeframe)
-            fig = build_interest_line_chart(popularity_df, keyword)
-            st.plotly_chart(fig, use_container_width=True)
-            if popularity_df.empty:
-                st.info(
-                    "Google Trends returned no data. "
-                    "Try a broader keyword, wider timeframe, or click **Refresh Trends**."
+                popularity_df = fetch_interest_over_time(
+                    keyword=keyword.strip().lower(), region=region, timeframe=timeframe
                 )
+            if popularity_df.empty:
+                st.warning(
+                    "No data available for this keyword. Try a more popular keyword."
+                )
+                # Attempt fallback keyword so the graph section is never blank
+                _fallback = "technology"
+                if keyword.strip().lower() != _fallback:
+                    with st.spinner(f"Trying fallback keyword '{_fallback}'…"):
+                        fallback_df = fetch_interest_over_time(
+                            keyword=_fallback, region=region, timeframe=timeframe
+                        )
+                    if not fallback_df.empty:
+                        st.info(f"Showing trend data for fallback keyword: **{_fallback}**")
+                        st.plotly_chart(
+                            build_interest_line_chart(fallback_df, _fallback),
+                            use_container_width=True,
+                        )
+            else:
+                fig = build_interest_line_chart(popularity_df, keyword)
+                st.plotly_chart(fig, use_container_width=True)
         except Exception as exc:
             LOGGER.exception("Unexpected error while fetching interest graph for %s: %s", keyword, exc)
             st.error("Could not build popularity graph due to an internal error.")
